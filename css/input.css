@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('../assets/fonts/comfortaa/Comfortaa-Bold.woff2') format('woff2'),
+      url('../assets/fonts/comfortaa/Comfortaa-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --breakpoint-xs: 30rem;
+
+  --color-darkgray: #121212;
+  --color-darkgreen: #15401D;
+  --color-green: #1F5D2A;
+  --color-lightgray: #DCDCDC;
+  --color-offwhite: #F5F5F5;
+  
+  --font-comfortaa: "Comfortaa", sans-serif
+}
