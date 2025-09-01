@@ -33,7 +33,6 @@
     <div id="modal" tabindex="-1" aria-hidden="true" class="hidden overflow-x-hidden overflow-y-auto fixed top-0 right-0 left-0 md:inset-0 z-50 justify-center items-center w-full h-[calc(100%-1rem)] max-h-full text-darkgray">
         <div class="p-4 w-full max-w-xl max-h-full">
             <div class="bg-offwhite rounded-lg shadow-sm shadow-darkgray/50">
-                <!-- Modal header -->
                 <div class="flex justify-between items-center p-4 text-white bg-gradient-to-br from-green to-darkgreen rounded-t-lg">
                   <div class="flex items-center">
                     <img id="modal-flag" class="hidden p-0.5 me-2 w-auto h-12 bg-offwhite/50" alt="Country flag">
@@ -48,14 +47,15 @@
                       <span class="sr-only">Close modal</span>
                   </button>
                 </div>
-                <!-- Modal body -->
                 <div class="rounded-b-lg">
-                  <p id="modal-greeting">To get started, please select a country from the dropdown or allow Gazetteer to access your location.</p>
+                  <div id="modal-greeting" class="px-4 py-2">
+                    <p>To get started, please select a country from the dropdown or allow Gazetteer to access your location.</p>
+                  </div>
                   <div id="info" class="hidden"></div>
-                  <p id="money" class="hidden">Money</p>
-                  <p id="health" class="hidden">Health</p>
-                  <p id="news" class="hidden">News</p>
-                  <p id="weather" class="hidden">Weather</p>
+                  <p id="money" class="hidden"></p>
+                  <p id="health" class="hidden"></p>
+                  <p id="news" class="hidden"></p>
+                  <p id="weather" class="hidden"></p>
                 </div>
             </div>
         </div>
