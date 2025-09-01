@@ -19,8 +19,8 @@
     <link rel="manifest" href="./assets/favicon_io/site.webmanifest">
   </head>
   <body class="fixed w-screen h-screen bg-lightgray">
-    <nav class="absolute z-10 flex justify-between items-center px-4 py-1 w-full h-12 sm:h-16 bg-gradient-to-br from-green to-darkgreen shadow-xl shadow-darkgray/50">
-        <h1 class="font-comfortaa text-lg xs:text-2xl sm:text-4xl text-offwhite">gazetteer</h1>
+    <nav class="flex absolute z-10 justify-between items-center px-4 py-1 w-full h-12 sm:h-16 bg-gradient-to-br from-green to-darkgreen shadow-xl shadow-darkgray/50">
+        <h1 class="font-comfortaa text-xl xs:text-2xl sm:text-4xl text-offwhite">gazetteer</h1>
         <select name="country" id="country-select" class="xs:text-lg bg-offwhite">
             <option value="" disabled selected>Select country</option>
         </select>
@@ -30,30 +30,32 @@
         <div id="map" class="h-full"></div>
     </main>
     
-    <!-- Main modal -->
-    <div id="modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+    <div id="modal" tabindex="-1" aria-hidden="true" class="hidden overflow-x-hidden overflow-y-auto fixed top-0 right-0 left-0 md:inset-0 z-50 justify-center items-center w-full h-[calc(100%-1rem)] max-h-full text-darkgray">
+        <div class="p-4 w-full max-w-xl max-h-full">
+            <div class="bg-offwhite rounded-lg shadow-sm shadow-darkgray/50">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Terms of Service
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
+                <div class="flex justify-between items-center p-4 text-white bg-gradient-to-br from-green to-darkgreen rounded-t-lg">
+                  <div class="flex items-center">
+                    <img id="modal-flag" class="hidden p-0.5 me-2 w-auto h-12 bg-offwhite/50" alt="Country flag">
+                    <h2 id="modal-title" class="text-2xl font-semibold">
+                      Welcome to Gazetteer
+                    </h2>
+                  </div>
+                  <button type="button" class="text-gray-400 hover:text-white w-8 h-8 inline-flex justify-center items-center cursor-pointer" data-modal-hide="modal">
+                      <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                      </svg>
+                      <span class="sr-only">Close modal</span>
+                  </button>
                 </div>
                 <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4">
-                    <p id="info" class="hidden">Info</p>
-                    <p id="money" class="hidden">Money</p>
-                    <p id="health" class="hidden">Health</p>
-                    <p id="news" class="hidden">News</p>
-                    <p id="weather" class="hidden">Weather</p>
+                <div class="rounded-b-lg">
+                  <p id="modal-greeting">To get started, please select a country from the dropdown or allow Gazetteer to access your location.</p>
+                  <div id="info" class="hidden"></div>
+                  <p id="money" class="hidden">Money</p>
+                  <p id="health" class="hidden">Health</p>
+                  <p id="news" class="hidden">News</p>
+                  <p id="weather" class="hidden">Weather</p>
                 </div>
             </div>
         </div>
