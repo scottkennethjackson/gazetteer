@@ -1,5 +1,6 @@
-import { fetchCountryInfo } from './utils/countryInfo.js';
-import { getCountryBorders } from './utils/getCountryBorders.js';
+import { getCountryBorders } from "./utils/getCountryBorders.js";
+import { fetchCountryInfo } from "./utils/countryInfo.js";
+import { fetchCountryMoney } from "./utils/countryMoney.js";
 
 let geoData = null;
 let spatialIndex = null;
@@ -9,20 +10,23 @@ let userMarker = null;
 let countryLayer = null;
 window.userCoords = null;
 
-const countrySelect = document.getElementById('country-select');
+const countrySelect = document.getElementById("country-select");
 const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalGreeting = document.getElementById("modal-greeting");
 
-const info = document.getElementById("info");
-const money = document.getElementById("money");
-const health = document.getElementById("health");
-const news = document.getElementById("news");
-const weather = document.getElementById("weather");
+const infoSection = document.getElementById("info");
+const moneySection = document.getElementById("money");
+const healthSection = document.getElementById("health");
+const newsSection = document.getElementById("news");
+const weatherSection = document.getElementById("weather");
 
-const map = L.map('map').setView([0, 0], 3);
+const map = L.map("map").setView([0, 0], 3);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    minZoom: 3,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  minZoom: 3,
+  attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
 const infoIcon = `<img src="./assets/icons/info.svg" class="p-1" alt="Info icon">`;
@@ -32,18 +36,28 @@ const newsIcon = `<img src="./assets/icons/news.svg" class="p-1" alt="News icon"
 const weatherIcon = `<img src="./assets/icons/weather.svg" class="p-1" alt="Weather icon">`;
 const locationIcon = `<img src="./assets/icons/location.svg" class="p-1" alt="Location icon">`;
 
-const infoBtn = L.easyButton(`${infoIcon}`, function() {showData(info)}).addTo(map);
-const moneyBtn = L.easyButton(`${moneyIcon}`, function(){showData(money)}).addTo(map);
-const healthBtn = L.easyButton(`${healthIcon}`, function(){showData(health)}).addTo(map);
-const newsBtn = L.easyButton(`${newsIcon}`, function(){showData(news)}).addTo(map);
-const weatherBtn = L.easyButton(`${weatherIcon}`, function(){showData(weather)}).addTo(map);
+const infoBtn = L.easyButton(`${infoIcon}`, function () {
+  showData(info);
+}).addTo(map);
+const moneyBtn = L.easyButton(`${moneyIcon}`, function () {
+  showData(money);
+}).addTo(map);
+const healthBtn = L.easyButton(`${healthIcon}`, function () {
+  showData(health);
+}).addTo(map);
+const newsBtn = L.easyButton(`${newsIcon}`, function () {
+  showData(news);
+}).addTo(map);
+const weatherBtn = L.easyButton(`${weatherIcon}`, function () {
+  showData(weather);
+}).addTo(map);
 
 L.easyButton(`${locationIcon}`, () => getLocation()).addTo(map);
 
 let lastFocusedButton = null;
 const easyButtons = [infoBtn, moneyBtn, healthBtn, newsBtn, weatherBtn];
 
-easyButtons.forEach(btn => {
+easyButtons.forEach((btn) => {
   btn.button.setAttribute("data-modal-target", "modal");
   btn.button.setAttribute("data-modal-toggle", "modal");
   btn.button.addEventListener("click", () => {
@@ -52,12 +66,12 @@ easyButtons.forEach(btn => {
 });
 
 const redMarkerIcon = L.icon({
-  iconUrl: './assets/markers/marker-icon-2x-red.png',
-  shadowUrl: './assets/markers/marker-shadow.png',
+  iconUrl: "./assets/markers/marker-icon-2x-red.png",
+  shadowUrl: "./assets/markers/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 
 const observer = new MutationObserver(() => {
@@ -78,7 +92,7 @@ observer.observe(modal, { attributes: true, attributeFilter: ["class"] });
 async function init() {
   geoData = await getCountryBorders();
   if (!geoData) return;
-  
+
   populateCountryDropdown(geoData);
   spatialIndex = buildSpatialIndex(geoData);
   getLocation();
@@ -89,11 +103,11 @@ init();
 function populateCountryDropdown(geoData) {
   if (!countrySelect) return;
 
-  let countries = geoData.features.map(feature => feature.properties.name);
+  let countries = geoData.features.map((feature) => feature.properties.name);
   countries.sort((a, b) => a.localeCompare(b));
 
-  countries.forEach(countryName => {
-    const option = document.createElement('option');
+  countries.forEach((countryName) => {
+    const option = document.createElement("option");
     option.value = countryName;
     option.textContent = countryName;
     countrySelect.appendChild(option);
@@ -101,15 +115,15 @@ function populateCountryDropdown(geoData) {
 }
 
 function showData(selectedCategory) {
-  const categories = [info, money, health, news, weather];
+  const categories = [infoSection, moneySection, healthSection, newsSection, weatherSection];
 
   if (locationIdentified || countrySelected) {
-    categories.forEach(category => category.classList.add("hidden"));
+    categories.forEach((category) => category.classList.add("hidden"));
     selectedCategory.classList.remove("hidden");
   } else {
     modalTitle.innerHTML = "Welcome to Gazetteer";
     modalGreeting.classList.remove("hidden");
-    categories.forEach(category => category.classList.add("hidden"));
+    categories.forEach((category) => category.classList.add("hidden"));
   }
 }
 
@@ -119,7 +133,7 @@ function highlightCountry(countryName) {
   }
 
   const countryFeature = geoData.features.find(
-    feature => feature.properties.name === countryName
+    (feature) => feature.properties.name === countryName
   );
   if (!countryFeature) return null;
 
@@ -129,14 +143,14 @@ function highlightCountry(countryName) {
       weight: 2,
       opacity: 1,
       fillColor: "#1F5D2A",
-      fillOpacity: 0.1
-    }
+      fillOpacity: 0.1,
+    },
   }).addTo(map);
 
   map.flyToBounds(countryLayer.getBounds(), {
     padding: [50, 50],
     maxZoom: 5,
-    duration: 1.5
+    duration: 1.5,
   });
 
   return countryFeature;
@@ -161,21 +175,31 @@ function success(position) {
     map.removeLayer(userMarker);
   }
 
-  userMarker = L.marker([userLatitude, userLongitude], { icon: redMarkerIcon }).addTo(map);
+  userMarker = L.marker([userLatitude, userLongitude], {
+    icon: redMarkerIcon,
+  }).addTo(map);
 
   if (geoData && spatialIndex) {
-    const userCountry = findCountryFast(userLatitude, userLongitude, geoData, spatialIndex);
+    const userCountry = findCountryFast(
+      userLatitude,
+      userLongitude,
+      geoData,
+      spatialIndex
+    );
 
     if (userCountry) {
       const userFeature = geoData.features.find(
-        feature => feature.properties.name === userCountry
+        (feature) => feature.properties.name === userCountry
       );
 
       if (userFeature) {
         highlightCountry(userCountry);
         updateModalFlag(userFeature);
         updateModalHeader(userCountry);
-        fetchCountryInfo(userCountry);
+
+        fetchCountryInfo(userCountry).then((countryData) => {
+          if (countryData) fetchCountryMoney(countryData);
+        });
       }
     }
   }
@@ -196,7 +220,7 @@ function buildSpatialIndex(geoData) {
       minY: bbox[1],
       maxX: bbox[2],
       maxY: bbox[3],
-      id: i
+      id: i,
     };
   });
 
@@ -210,7 +234,7 @@ function findCountryFast(lat, lng, geoData, index) {
     minX: lng,
     minY: lat,
     maxX: lng,
-    maxY: lat
+    maxY: lat,
   });
 
   for (const candidate of candidates) {
@@ -236,7 +260,9 @@ countrySelect.addEventListener("change", function () {
 
   updateModalHeader(selectedCountry);
   updateModalFlag(selectedFeature);
-  fetchCountryInfo(selectedCountry);
+  fetchCountryInfo(selectedCountry).then((countryData) => {
+    if (countryData) fetchCountryMoney(countryData);
+  });
 
   if (!window.userCoords) return;
 
@@ -254,12 +280,16 @@ countrySelect.addEventListener("change", function () {
   const userPoint = turf.point(window.userCoords);
   const countryCenter = turf.centerOfMass(selectedFeature).geometry.coordinates;
   const distanceMiles = turf.distance(userPoint, turf.point(countryCenter), {
-    units: "miles"
+    units: "miles",
   });
 
   L.popup()
     .setLatLng([countryCenter[1], countryCenter[0]])
-    .setContent(`${selectedCountry} is ${distanceMiles.toFixed(1)} miles from your current location`)
+    .setContent(
+      `${selectedCountry} is ${distanceMiles.toFixed(
+        1
+      )} miles from your current location`
+    )
     .openOn(map);
 });
 
@@ -279,9 +309,6 @@ function updateModalFlag(countryFeature) {
 }
 
 function updateModalHeader(countryName) {
-  const modalTitle = document.getElementById("modal-title");
-  const modalGreeting = document.getElementById("modal-greeting");
-
   if (modalTitle) modalTitle.textContent = countryName;
   if (modalGreeting) modalGreeting.classList.add("hidden");
 }
