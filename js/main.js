@@ -1,6 +1,7 @@
 import { getCountryBorders } from "./utils/getCountryBorders.js";
 import { fetchCountryInfo } from "./utils/countryInfo.js";
 import { fetchCountryMoney } from "./utils/countryMoney.js";
+import { fetchCountryHealth } from "./utils/countryHealth.js";
 
 let geoData = null;
 let spatialIndex = null;
@@ -198,7 +199,10 @@ function success(position) {
         updateModalHeader(userCountry);
 
         fetchCountryInfo(userCountry).then((countryData) => {
-          if (countryData) fetchCountryMoney(countryData);
+          if (countryData) {
+            fetchCountryMoney(countryData);
+            fetchCountryHealth(countryData);
+          }
         });
       }
     }
@@ -261,7 +265,10 @@ countrySelect.addEventListener("change", function () {
   updateModalHeader(selectedCountry);
   updateModalFlag(selectedFeature);
   fetchCountryInfo(selectedCountry).then((countryData) => {
-    if (countryData) fetchCountryMoney(countryData);
+    if (countryData) {
+      fetchCountryMoney(countryData);
+      fetchCountryHealth(countryData);
+    }
   });
 
   if (!window.userCoords) return;
