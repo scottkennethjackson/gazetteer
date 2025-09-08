@@ -1,67 +1,83 @@
-async function fetchMetric(endpoint, countryCode) {
-  try {
-    const proxyUrl = `/api/whoProxy?url=${encodeURIComponent(endpoint)}`;
-    const res = await fetch(proxyUrl);
+export async function fetchCountryHealth(countryData) {
+  const healthContainer = document.getElementById("health");
+  if (!healthContainer) return;
 
-    if (!res.ok) throw new Error(`Proxy failed: ${res.status}`);
-    const data = await res.json();
+  const countryCode = countryData.cca3;
+  if (!countryCode) {
+    console.warn("Missing country code for health data");
+    healthContainer.innerHTML = `
+      <div class="p-4">
+        <p class="text-red-600">Health information unavailable.</p>
+      </div>
+    `;
+    return;
+  }
 
-    if (!data.value || data.value.length === 0) {
-      console.warn(`No WHO data found for ${countryCode}`);
+  const indicators = {
+    lifeExpectancy: "SP.DYN.LE00.IN",
+    doctors: "SH.MED.PHYS.ZS",
+    fertility: "SP.DYN.TFRT.IN",
+    immunisation: "SH.IMM.IDPT",
+    expenditure: "SH.XPD.CHEX.GD.ZS",
+  };
+
+  async function fetchMetric(indicator) {
+    try {
+      const url = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+      const data = await response.json();
+
+      if (!Array.isArray(data) || !data[1] || data[1].length === 0)
+        return "N/A";
+
+      const latest = data[1].find((entry) => entry.value !== null);
+      return latest ? latest.value : "N/A";
+    } catch (error) {
+      console.error(`Error fetching ${indicator} for ${countryCode}:`, error);
       return "N/A";
     }
-
-    const sorted = data.value
-      .filter(item => item.NumericValue !== null)
-      .sort((a, b) => b.TimeDim - a.TimeDim);
-
-    return sorted.length > 0 ? sorted[0].NumericValue : "N/A";
-  } catch (error) {
-    console.error(`Error fetching WHO data for ${countryCode}:`, error);
-    return "N/A";
   }
-}
 
-const endpoints = {
-  lifeExpectancy: `https://ghoapi.azureedge.net/api/WHOSIS_000001?$filter=SpatialDim eq '${countryCode}'`,
-  doctors: `https://ghoapi.azureedge.net/api/HRH_0001?$filter=SpatialDim eq '${countryCode}'`,
-  expenditure: `https://ghoapi.azureedge.net/api/SHA_XPDPC?$filter=SpatialDim eq '${countryCode}'`,
-  obesity: `https://ghoapi.azureedge.net/api/NCD_BMI_30A?$filter=SpatialDim eq '${countryCode}'`,
-  immunisation: `https://ghoapi.azureedge.net/api/WHS4_539?$filter=SpatialDim eq '${countryCode}'`
-};
+  const [lifeExpectancy, doctors, fertility, immunisation, expenditure] =
+    await Promise.all([
+      fetchMetric(indicators.lifeExpectancy),
+      fetchMetric(indicators.doctors),
+      fetchMetric(indicators.fertility),
+      fetchMetric(indicators.immunisation),
+      fetchMetric(indicators.expenditure),
+    ]);
 
-const [lifeExpectancy, doctors, expenditure, obesity, immunisation] = await Promise.all([
-  fetchMetric(endpoints.lifeExpectancy, countryCode),
-  fetchMetric(endpoints.doctors, countryCode),
-  fetchMetric(endpoints.expenditure, countryCode),
-  fetchMetric(endpoints.obesity, countryCode),
-  fetchMetric(endpoints.immunisation, countryCode)
-]);
+  const formatNumber = (value, decimals = 1) =>
+    value !== "N/A" && !isNaN(value)
+      ? parseFloat(value).toFixed(decimals)
+      : "N/A";
 
-const healthContainer = document.getElementById("health");
-healthContainer.innerHTML = `
-  <div class="overflow-hidden w-full rounded-b-lg">
-    <div class="divide-y divide-gray-200">
-      <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
-        <span class="font-medium">Life Expectancy:</span>
-        <span>${lifeExpectancy} years</span>
-      </div>
-      <div class="flex justify-between items-center px-4 py-2 bg-white">
-        <span class="font-medium">Doctors per 1,000:</span>
-        <span>${doctors}</span>
-      </div>
-      <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
-        <span class="font-medium">Healthcare Expenditure (% GDP):</span>
-        <span>${expenditure}</span>
-      </div>
-      <div class="flex justify-between items-center px-4 py-2 bg-white">
-        <span class="font-medium">Obesity Rate (%):</span>
-        <span>${obesity}</span>
-      </div>
-      <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
-        <span class="font-medium">Immunisation Rate (%):</span>
-        <span>${immunisation}</span>
+  healthContainer.innerHTML = `
+    <div class="overflow-hidden w-full rounded-b-lg">
+      <div class="divide-y divide-gray-200">
+        <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
+          <span class="font-medium">Life expectancy:</span>
+          <span>${formatNumber(lifeExpectancy, 1)} years</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2 bg-white">
+          <span class="font-medium">Doctors per 1,000 people:</span>
+          <span>${formatNumber(doctors, 0)}</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
+          <span class="font-medium">Fertility rate (births per woman):</span>
+          <span>${formatNumber(fertility, 2)}</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2 bg-white">
+          <span class="font-medium">Immunisation rate:</span>
+          <span>${formatNumber(immunisation, 0)}%</span>
+        </div>
+        <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
+          <span class="font-medium">Healthcare expenditure (% GDP):</span>
+          <span>${formatNumber(expenditure, 2)}%</span>
+        </div>
       </div>
     </div>
-  </div>
-`;
+  `;
+}
