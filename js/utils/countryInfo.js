@@ -29,7 +29,7 @@ export async function fetchCountryInfo(countryName) {
   <div class="overflow-hidden w-full rounded-b-lg">
     <div class="divide-y divide-gray-200">
       <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
-        <span class="font-medium">Capital City:</span>
+        <span class="font-medium">Capital city:</span>
         <span>${capital}</span>
       </div>
       <div class="flex justify-between items-center px-4 py-2 bg-white">
