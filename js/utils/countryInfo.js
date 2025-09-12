@@ -56,7 +56,7 @@ export async function fetchCountryInfo(countryName) {
     console.error("Error fetching country info:", error);
     infoContainer.innerHTML = `
       <div class="p-4">
-        <p class="text-red-600">Sorry, we couldn't load country information.</p>
+        <p class="text-red">Sorry, we couldn't load country information.</p>
       </div>
     `;
     return null;

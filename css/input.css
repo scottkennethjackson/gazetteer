@@ -11,12 +11,14 @@
 
 @theme {
   --breakpoint-xs: 30rem;
+  --breakpoint-xm: 36rem;
 
   --color-darkgray: #121212;
   --color-darkgreen: #15401D;
   --color-green: #1F5D2A;
   --color-lightgray: #DCDCDC;
   --color-offwhite: #F5F5F5;
+  --color-red: #E01E5A;
   
   --font-comfortaa: "Comfortaa", sans-serif
 }

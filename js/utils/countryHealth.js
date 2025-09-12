@@ -7,7 +7,7 @@ export async function fetchCountryHealth(countryData) {
     console.warn("Missing country code for health data");
     healthContainer.innerHTML = `
       <div class="p-4">
-        <p class="text-red-600">Health information unavailable.</p>
+        <p class="text-red">Health information unavailable.</p>
       </div>
     `;
     return;
