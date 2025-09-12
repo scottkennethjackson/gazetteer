@@ -2,6 +2,7 @@ import { getCountryBorders } from "./utils/getCountryBorders.js";
 import { fetchCountryInfo } from "./utils/countryInfo.js";
 import { fetchCountryMoney } from "./utils/countryMoney.js";
 import { fetchCountryHealth } from "./utils/countryHealth.js";
+import { fetchCountryNews } from "./utils/countryNews.js";
 
 let geoData = null;
 let spatialIndex = null;
@@ -202,6 +203,7 @@ function success(position) {
           if (countryData) {
             fetchCountryMoney(countryData);
             fetchCountryHealth(countryData);
+            fetchCountryNews(countryData);
           }
         });
       }
@@ -268,6 +270,7 @@ countrySelect.addEventListener("change", function () {
     if (countryData) {
       fetchCountryMoney(countryData);
       fetchCountryHealth(countryData);
+      fetchCountryNews(countryData);
     }
   });
 
@@ -290,12 +293,15 @@ countrySelect.addEventListener("change", function () {
     units: "miles",
   });
 
+  const formattedMiles = distanceMiles.toLocaleString(undefined, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits:1,
+  });
+
   L.popup()
     .setLatLng([countryCenter[1], countryCenter[0]])
     .setContent(
-      `${selectedCountry} is ${distanceMiles.toFixed(
-        1
-      )} miles from your current location`
+      `${selectedCountry} is ${formattedMiles} miles from your current location.`
     )
     .openOn(map);
 });
