@@ -67,7 +67,7 @@ export async function fetchCountryHealth(countryData) {
         </div>
         <div class="flex justify-between items-center px-4 py-2 bg-gray-50">
           <span class="font-medium">Fertility rate (births per woman):</span>
-          <span>${formatNumber(fertility, 2)}</span>
+          <span>${formatNumber(fertility, 1)}</span>
         </div>
         <div class="flex justify-between items-center px-4 py-2 bg-white">
           <span class="font-medium">Immunisation rate:</span>
