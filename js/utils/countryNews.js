@@ -24,7 +24,7 @@ export async function fetchCountryNews(countryData) {
           .slice(0, 3)
           .map(
             (article, index) => `
-        <div class="flex p-4 space-x-4 ${
+        <div class="flex px-4 py-2 space-x-4 ${
           index % 2 === 0 ? "bg-gray-50" : "bg-white"
         }">
           <img src="${article.urlToImage || "./assets/icons/news.svg"}" 
