@@ -3,6 +3,7 @@ import { fetchCountryInfo } from "./utils/countryInfo.js";
 import { fetchCountryMoney } from "./utils/countryMoney.js";
 import { fetchCountryHealth } from "./utils/countryHealth.js";
 import { fetchCountryNews } from "./utils/countryNews.js";
+import { fetchCountryWeather } from "./utils/countryWeather.js";
 
 let geoData = null;
 let spatialIndex = null;
@@ -204,6 +205,7 @@ function success(position) {
             fetchCountryMoney(countryData);
             fetchCountryHealth(countryData);
             fetchCountryNews(countryData);
+            fetchCountryWeather(userLatitude, userLongitude, userCountry);
           }
         });
       }
@@ -268,9 +270,13 @@ countrySelect.addEventListener("change", function () {
   updateModalFlag(selectedFeature);
   fetchCountryInfo(selectedCountry).then((countryData) => {
     if (countryData) {
+      const countryCenter = turf.centerOfMass(selectedFeature).geometry.coordinates;
+      
       fetchCountryMoney(countryData);
       fetchCountryHealth(countryData);
       fetchCountryNews(countryData);
+      fetchCountryWeather(countryCenter[1], countryCenter[0], selectedCountry);
+
     }
   });
 
