@@ -6,7 +6,9 @@ export async function fetchCountryNews(countryData) {
   const countryName = countryData.name.common;
 
   try {
-    const response = await fetch(`/api/newsProxy?country=${countryCode}&name=${countryName}`);
+    const response = await fetch(
+      `/api/newsProxy?country=${countryCode}&name=${countryName}`
+    );
     if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
 
     const data = await response.json();
@@ -15,11 +17,17 @@ export async function fetchCountryNews(countryData) {
       return;
     }
 
-    newsContainer.innerHTML = data.articles
-      .slice(0, 3)
-      .map(article => `
-        <div class="flex p-4 space-x-4">
-          <img src="${article.urlToImage || './assets/icons/news.svg'}" 
+    newsContainer.innerHTML = `
+      <div class="overflow-hidden w-full rounded-b-lg">
+      <div class="divide-y divide-gray-200">
+        ${data.articles
+          .slice(0, 3)
+          .map(
+            (article, index) => `
+        <div class="flex p-4 space-x-4 ${
+          index % 2 === 0 ? "bg-gray-50" : "bg-white"
+        }">
+          <img src="${article.urlToImage || "./assets/icons/news.svg"}" 
                alt="Thumbnail" class="w-1/3 xm:w-1/2 object-cover rounded-lg">
           <div class="flex flex-col justify-between h-fill">
             <h3 class="text-lg font-semibold">${article.title}</h3>
@@ -29,8 +37,11 @@ export async function fetchCountryNews(countryData) {
             </a>
           </div>
         </div>
-      `)
-      .join("");
+      `
+          )
+          .join("")}
+      </div>
+      </div>`;
   } catch (error) {
     console.error("Error fetching news:", error);
     newsContainer.innerHTML = `<p class="p-4">Sorry, news could not be loaded.</p>`;
