@@ -1,6 +1,3 @@
-// countryMoney.js
-const ACCESS_KEY = "afa2a909de566bdc2c9a3a3caa28ab3b";
-
 export async function fetchCountryMoney(countryData) {
   const moneyContainer = document.getElementById("money");
   if (!moneyContainer) return;
@@ -8,7 +5,7 @@ export async function fetchCountryMoney(countryData) {
   try {
     if (!countryData || !countryData.currencies) {
       moneyContainer.innerHTML = `
-        <div class="p-4 text-red-600">Currency information unavailable.</div>
+        <div class="p-4 text-red">Currency information unavailable.</div>
       `;
       return;
     }
@@ -17,8 +14,7 @@ export async function fetchCountryMoney(countryData) {
     const { name: currencyName, symbol: currencySymbol } =
       countryData.currencies[currencyCode];
 
-    const url = `https://api.exchangerate.host/live?access_key=${ACCESS_KEY}&source=${currencyCode}&currencies=USD,EUR,GBP&format=1`;
-    const response = await fetch(url);
+    const response = await fetch(`/api/moneyProxy?base=${currencyCode}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -26,9 +22,9 @@ export async function fetchCountryMoney(countryData) {
 
     const data = await response.json();
 
-    if (data.success === false) {
+    if (!data || !data.rates) {
       moneyContainer.innerHTML = `
-        <div class="p-4 text-red-600">Exchange rate data unavailable.</div>
+        <div class="p-4 text-red">Exchange rate data unavailable.</div>
       `;
       console.error("API Error:", data.error?.info || "Unknown error");
       return;
@@ -74,7 +70,7 @@ export async function fetchCountryMoney(countryData) {
   } catch (error) {
     console.error("Error fetching exchange rates:", error);
     moneyContainer.innerHTML = `
-      <div class="p-4 text-red-600">Sorry, we couldn't load currency information.</div>
+      <div class="p-4 text-red">Sorry, we couldn't load currency information.</div>
     `;
   }
 }
