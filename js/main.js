@@ -4,6 +4,7 @@ import { fetchCountryMoney } from "./utils/countryMoney.js";
 import { fetchCountryHealth } from "./utils/countryHealth.js";
 import { fetchCountryNews } from "./utils/countryNews.js";
 import { fetchCountryWeather } from "./utils/countryWeather.js";
+import { fetchCountryPlaces } from "./utils/countryPlaces.js";
 
 let geoData = null;
 let spatialIndex = null;
@@ -182,6 +183,8 @@ function success(position) {
     icon: redMarkerIcon,
   }).addTo(map);
 
+  userMarker.bindPopup("You are here").openPopup();
+
   if (geoData && spatialIndex) {
     const userCountry = findCountryFast(
       userLatitude,
@@ -206,6 +209,7 @@ function success(position) {
             fetchCountryHealth(countryData);
             fetchCountryNews(countryData);
             fetchCountryWeather(userLatitude, userLongitude, userCountry);
+            fetchCountryPlaces(countryData.cca2.toLowerCase(), map);
           }
         });
       }
@@ -271,12 +275,12 @@ countrySelect.addEventListener("change", function () {
   fetchCountryInfo(selectedCountry).then((countryData) => {
     if (countryData) {
       const countryCenter = turf.centerOfMass(selectedFeature).geometry.coordinates;
-      
+
       fetchCountryMoney(countryData);
       fetchCountryHealth(countryData);
       fetchCountryNews(countryData);
       fetchCountryWeather(countryCenter[1], countryCenter[0], selectedCountry);
-
+      fetchCountryPlaces(countryData.cca2.toLowerCase(), map);
     }
   });
 
@@ -307,7 +311,7 @@ countrySelect.addEventListener("change", function () {
   L.popup()
     .setLatLng([countryCenter[1], countryCenter[0]])
     .setContent(
-      `${selectedCountry} is ${formattedMiles} miles from your current location.`
+      `${selectedCountry} is ${formattedMiles} miles from your current location`
     )
     .openOn(map);
 });
