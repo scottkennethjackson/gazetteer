@@ -1,6 +1,21 @@
-export async function fetchCountryPlaces(countryCode, map) {
+export async function fetchCountryPlaces(countryData, map) {
   try {
-    const response = await fetch(`/api/placesProxy?country=${countryCode}`);
+    const countryName =
+      countryData?.name?.common || countryData?.name?.official || "this country";
+
+    // --- TEMPORARY DISABLE ---
+    console.log(
+      `Tourist attractions data is not available for ${countryName} yet.`
+    );
+    // TODO: Re-enable code below once Geoapify supports filter=countrycode
+    return;
+
+    // --- EXISTING CODE -> awaiting Geoapify's countrycode filter (coming soon) ---
+    /*
+    const countryCode = countryData.cca2.toLowerCase();
+    const url = `/api/placesProxy?country=${countryCode}`;
+
+    const response = await fetch(url);
     if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
 
     const data = await response.json();
@@ -27,6 +42,7 @@ export async function fetchCountryPlaces(countryCode, map) {
 
       marker.bindPopup(popupContent);
     });
+    */
   } catch (error) {
     console.error("Error fetching attractions:", error);
   }

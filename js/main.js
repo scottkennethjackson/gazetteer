@@ -209,7 +209,8 @@ function success(position) {
             fetchCountryHealth(countryData);
             fetchCountryNews(countryData);
             fetchCountryWeather(userLatitude, userLongitude, userCountry);
-            fetchCountryPlaces(countryData.cca2.toLowerCase(), map);
+            fetchCountryPlaces(countryData, map);
+
           }
         });
       }
@@ -280,7 +281,7 @@ countrySelect.addEventListener("change", function () {
       fetchCountryHealth(countryData);
       fetchCountryNews(countryData);
       fetchCountryWeather(countryCenter[1], countryCenter[0], selectedCountry);
-      fetchCountryPlaces(countryData.cca2.toLowerCase(), map);
+      fetchCountryPlaces(countryData, map);
     }
   });
 
